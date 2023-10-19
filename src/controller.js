@@ -6,19 +6,6 @@ class LibrosController{
         res.json(result);
     }
 
-
-    async add(req, res){
-        const libro = req.body;
-        const [result] = await pool.query(`INSERT INTO libros(nombre,autor,categoria,añopublicacion,ISBN) VALUES (?,?,?,?,?)`,[libro.nombre, libro.autor, libro.categoria, libro.añopublicacion, libro.ISBN]);
-        res.json({"id insertado": result.insertId})
-    }
-
-    async delete(req,res){
-        const libro= req.body;
-        const [result] = await pool.query(`DELETE FROM libros WHERE id=(?)`, [libro.id]);
-        res.json({"Registro Eliminado": result.affectedRows});
-    }
-
     async getOne(req, res) {
         const libro= req.body;
         try {
@@ -32,6 +19,19 @@ class LibrosController{
             console.error("Error al buscar el libro por ID:", error);
             res.status(500).json({ "Mensaje": "Error en el servidor" });
         }
+    }
+
+
+    async add(req, res){
+        const libro = req.body;
+        const [result] = await pool.query(`INSERT INTO libros(nombre,autor,categoria,añopublicacion,ISBN) VALUES (?,?,?,?,?)`,[libro.nombre, libro.autor, libro.categoria, libro.añopublicacion, libro.ISBN]);
+        res.json({"id insertado": result.insertId})
+    }
+
+    async delete(req,res){
+        const libro= req.body;
+        const [result] = await pool.query(`DELETE FROM libros WHERE id=(?)`, [libro.id]);
+        res.json({"Registro Eliminado": result.affectedRows});
     }
 
     async update(req,res){
