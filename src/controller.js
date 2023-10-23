@@ -36,12 +36,6 @@ class LibrosController {
     }
 
     async delete(req, res) {
-        const libro = req.body;
-        const [result] = await pool.query(`DELETE FROM libros WHERE ISBN=(?)`, [libro.ISBN]);
-        res.json({ "Registro Eliminado": result.affectedRows });
-    }
-
-    async delete(req, res) {
         try {
           const libro = req.body;
           if (libro.ISBN) {
@@ -53,14 +47,26 @@ class LibrosController {
             console.error("Error al buscar el libro por ISBN:", error);
             res.status(500).json({ "Mensaje": "Error en el servidor" });
         }
-      }
-      
+      }      
 
     async update(req, res) {
-        const libro = req.body;
-        const [result] = await pool.query(`UPDATE libros SET nombre=(?),autor=(?),categoria=(?),añopublicacion=(?),ISBN=(?) WHERE id=(?)`, [libro.nombre, libro.autor, libro.categoria, libro.añopublicacion, libro.ISBN, libro.id]);
-        res.json({ "Registro Actualizado": result.affectedRows });
-    }
+        try {
+          const libro = req.body;
+          if (libro.id && libro.nombre && libro.autor && libro.categoria && libro.añopublicacion && libro.ISBN) {
+            const query = `UPDATE libros SET nombre = ?, autor = ?, categoria = ?, añopublicacion = ?, ISBN = ? WHERE id = ?`;
+            const values = [libro.nombre, libro.autor, libro.categoria, libro.añopublicacion, libro.ISBN, libro.id];
+            const [result] = await pool.query(query, values);
+            if (result.affectedRows === 0) {
+              throw { error: "No se encontró ningún registro para actualizar" };
+            }
+            res.json({ "Registro Actualizado": result.affectedRows });
+          } else {
+            throw { error: "Faltan campos obligatorios" };
+          }
+        } catch (error) {
+          res.status(400).json(error);
+        }
+      }
 
 }
 
