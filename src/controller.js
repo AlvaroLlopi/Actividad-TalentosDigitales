@@ -42,7 +42,7 @@ s    }
         const [result] = await pool.query(`SELECT * FROM Libros WHERE ISBN=(?)`, [libro.ISBN]);
         if (result.length > 0) {
             const [result] = await pool.query(`DELETE FROM Libros WHERE ISBN=(?)`, [libro.ISBN]);
-            res.json({"Regsitros eliminados": result.affectedRows});
+            res.json({"Registro eliminado": result.affectedRows});
         } else {
             res.status(404).json({ "Mensaje": "No se encontró el libro con el ISBN especificado" });
         }}
